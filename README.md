@@ -32,6 +32,7 @@ cd employeeManager-website
 ### 2. Install Backend Dependencies
 
 cd server
+
 npm install
 
 
@@ -45,6 +46,7 @@ npm start
 ### 4. Install Frontend Dependencies
 
 cd client
+
 npm install
 
 
