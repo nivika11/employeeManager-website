@@ -1,4 +1,4 @@
-// server.js
+// Server.js
 const express = require('express');
 const cors = require('cors');
 
@@ -50,6 +50,8 @@ const validateEmployee = (data, isUpdate = false) => {
   return errors;
 };
 
+
+
 // GET all employees
 app.get('/api/employees', (req, res) => {
   res.json(employees);
@@ -62,8 +64,10 @@ app.post('/api/employees', (req, res) => {
     return res.status(400).json({ error: errors.join(' ') });
   }
 
+  // Destructure fields
   const { name, dept, active, number, email, address, photo } = req.body;
 
+  // Create new employee
   const newEmployee = {
     id: nextId++,
     name: name.trim(),
@@ -75,26 +79,33 @@ app.post('/api/employees', (req, res) => {
     photo,
   };
 
+  // Store employee
   employees.push(newEmployee);
-  res.status(201).json(newEmployee);
+  res.status(201).json(newEmployee); 
 });
+
+
 
 // PUT - Update employee
 app.put('/api/employees/:id', (req, res) => {
   const id = parseInt(req.params.id);
   const index = employees.findIndex(emp => emp.id === id);
 
+  // Employee not found
   if (index === -1) {
     return res.status(404).json({ error: 'Employee not found' });
   }
 
+  // Validate input
   const errors = validateEmployee(req.body);
   if (errors.length > 0) {
     return res.status(400).json({ error: errors.join(' ') });
   }
 
+  // Destructure fields
   const { name, dept, active, number, email, address, photo } = req.body;
 
+  // Update employee
   employees[index] = {
     ...employees[index],
     name: name.trim(),
@@ -106,8 +117,11 @@ app.put('/api/employees/:id', (req, res) => {
     photo,
   };
 
+  // Return updated employee
   res.json(employees[index]);
 });
+
+
 
 // DELETE - Remove employee
 app.delete('/api/employees/:id', (req, res) => {
@@ -115,13 +129,16 @@ app.delete('/api/employees/:id', (req, res) => {
   const initialLength = employees.length;
   employees = employees.filter(emp => emp.id !== id);
 
+  // If no employee was removed
   if (employees.length === initialLength) {
     return res.status(404).json({ error: 'Employee not found' });
   }
 
+  // Successful deletion
   res.status(204).send();
 });
 
+// Start server
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
 });

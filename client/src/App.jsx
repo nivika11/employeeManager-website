@@ -1,7 +1,7 @@
 // src/App.jsx
 import { useState, useEffect } from 'react';
 
-// MAIN APP COMPONENT
+// Main app component
 function App() {
   const [formData, setFormData] = useState({
     name: '',
@@ -13,7 +13,7 @@ function App() {
     photo: null,
   });
 
-  // STATE - Employees and UI states
+  // Employees and UI states
   const [employees, setEmployees] = useState([]);
   const [isEditing, setIsEditing] = useState(false);
   const [currentId, setCurrentId] = useState(null);
@@ -22,12 +22,12 @@ function App() {
   const [message, setMessage] = useState({ text: '', type: '' });
   const [deleteConfirm, setDeleteConfirm] = useState(null); 
 
-  // LOAD - Fetch employees on mount
+  // Fetch employees on mount
   useEffect(() => {
     fetchEmployees();
   }, []);
 
-  // FETCH - Load employees from backend
+  // Load employees from backend
   const fetchEmployees = () => {
     fetch('http://localhost:3000/api/employees')
       .then(res => res.json())
@@ -35,7 +35,7 @@ function App() {
       .catch(err => console.error('Failed to load employees:', err));
   };
 
-  // INPUT CHANGE - Handle form input changes
+  // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
     const newValue = type === 'checkbox' ? checked : value;
@@ -55,7 +55,7 @@ function App() {
     }
   };
 
-  // PHOTO - Handle photo upload and clear error on new selection
+  // Handle photo upload and clear error on new selection
   const handlePhotoChange = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -69,16 +69,19 @@ function App() {
       });
     }
 
+    // Validate file type and size
     if (!file.type.match('image/(jpeg|png|jpg)')) {
       setErrors(prev => ({ ...prev, photo: 'Only JPG or PNG images are allowed.' }));
       return;
     }
 
+    // Max size 2MB
     if (file.size > 2 * 1024 * 1024) {
       setErrors(prev => ({ ...prev, photo: 'File too large (max 2MB).' }));
       return;
     }
 
+    // Read file as base64
     const reader = new FileReader();
     reader.onload = (event) => {
       setFormData({ ...formData, photo: event.target.result });
@@ -86,36 +89,36 @@ function App() {
     reader.readAsDataURL(file);
   };
 
-  // VALIDATE - Form validation
+  // Form validation
   const validateForm = () => {
     const newErrors = {};
 
-    // Name
+    // Name Validation
     if (!formData.name.trim()) newErrors.name = 'Employee name is required.';
     else if (formData.name.trim().length < 2) newErrors.name = 'Name must be at least 2 characters.';
 
-    // Email
+    // Email Validation
     if (!formData.email.trim()) newErrors.email = 'Email is required.';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
       newErrors.email = 'Please enter a valid email address.';
 
-    // Number
+    // Number Validation
     if (!formData.number.trim()) newErrors.number = 'Employee number is required.';
     else if (!/^\d+$/.test(formData.number))
       newErrors.number = 'Employee number must contain only digits.';
     else if (formData.number.length > 10)
       newErrors.number = 'Employee number too long (max 10 digits).';
 
-    // Address
+    // Address Validation
     if (!formData.address.trim()) newErrors.address = 'Employee address is required.';
 
-    // Photo
+    // Photo Validation
     if (!formData.photo) newErrors.photo = 'Employee photo is required.';
 
     return newErrors;
   };
 
-  // SUBMIT - Create or Update employee
+  // Create or Update employee
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage({ text: '', type: '' });
@@ -132,6 +135,7 @@ function App() {
         : 'http://localhost:3000/api/employees';
       const method = isEditing ? 'PUT' : 'POST';
 
+      // Send data to backend
       const response = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
@@ -144,9 +148,12 @@ function App() {
           text: isEditing ? 'Employee updated successfully!' : 'Employee created successfully!',
           type: 'success',
         });
-        fetchEmployees();
-        resetForm();
+
+        // Refresh employee list
+        fetchEmployees(); // Refresh list
+        resetForm(); // Clear form
         setTimeout(() => setMessage({ text: '', type: '' }), 5000); // clear message after 5s
+
       } else {
         const errorData = await response.json();
         setMessage({ text: errorData.error || 'Something went wrong.', type: 'error' });
@@ -157,7 +164,7 @@ function App() {
     }
   };
 
-  // RESET - Clear form
+  // Clear form
   const resetForm = () => {
     setFormData({
       name: '',
@@ -173,7 +180,7 @@ function App() {
     setErrors({});
   };
 
-  // EDIT - Populate form for editing
+  // Populate form for editing
   const handleEdit = (emp) => {
     setFormData({
       name: emp.name,
@@ -184,9 +191,9 @@ function App() {
       address: emp.address,
       photo: emp.photo,
     });
-    setIsEditing(true);
-    setCurrentId(emp.id);
-    setErrors({});
+    setIsEditing(true); // Switch to edit mode
+    setCurrentId(emp.id); // Store current employee ID
+    setErrors({}); // Clear previous errors
   };
 
   // DELETE - Remove employee
@@ -199,7 +206,7 @@ function App() {
     fetch(`http://localhost:3000/api/employees/${deleteConfirm}`, { method: 'DELETE' })
       .then(() => {
         setMessage({ text: 'Employee deleted!', type: 'success' });
-        fetchEmployees();
+        fetchEmployees(); // Refresh list
         setTimeout(() => setMessage({ text: '', type: '' }), 3000);
       })
       .catch(err => {
