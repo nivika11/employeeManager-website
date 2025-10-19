@@ -32,12 +32,13 @@ cd employeeManager-website
 ### 2. Install Backend Dependencies
 
 cd server
+
 npm install
 
 
 ### 3. Start the Backend Server
 
-npm start
+npm start or node server.js
 
 ** The server will run on: http://localhost:3000
 
@@ -45,6 +46,7 @@ npm start
 ### 4. Install Frontend Dependencies
 
 cd client
+
 npm install
 
 
