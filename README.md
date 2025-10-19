@@ -10,9 +10,6 @@ A full-stack employee management system built with **React + Vite (frontend)** a
 - **Client & server-side validation** for all fields
 - **Photo upload** with preview (JPG/PNG, max 2MB)
 - **In-memory storage** — no database setup needed
-- **Responsive design** — works on desktop and mobile
-- **User-friendly UI** with inline error messages and success notifications
-- **Custom confirmation modal** for delete actions
 
 ---
 
